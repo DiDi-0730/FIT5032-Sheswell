@@ -212,7 +212,7 @@ onMounted(() => {
 .btn-ghost {
   background: #fff;
   border: 0;
-  border-radius: 999px; 
+  border-radius: 999px;
   padding: 0.55rem 1rem;
   box-shadow: var(--shadow-soft);
 }

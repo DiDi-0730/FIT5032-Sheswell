@@ -51,8 +51,8 @@ onMounted(async () => {
           <h1 class="display-5 fw-bold mb-3 title-shadow">{{ data.hero.title }}</h1>
           <p class="lead text-body-emphasis mb-4">{{ data.hero.subtitle }}</p>
           <div class="d-flex gap-2 mb-4">
-            <RouterLink class="btn btn-cta me-2" to="/login">Log in</RouterLink>
             <RouterLink class="btn btn-ghost" to="/signup">Sign up</RouterLink>
+            <RouterLink class="btn btn-cta" to="/login">Log in</RouterLink>
           </div>
           <div class="d-flex gap-3">
             <div class="pill peach"></div>
@@ -76,7 +76,7 @@ onMounted(async () => {
     <section class="row g-4">
       <!-- Today's Health Overview -->
       <div class="col-12 col-lg-4">
-        <div class="card-soft p-4 h-100">
+        <div class="card-soft card-glass p-4 h-100">
           <h5 class="mb-3">{{ data.today.title }}</h5>
           <div class="text-muted text-center py-5">
             Please log in to view your personalized health data
@@ -86,14 +86,14 @@ onMounted(async () => {
 
       <!-- Quick function -->
       <div class="col-12 col-lg-4">
-        <div class="card-soft p-4 h-100">
+        <div class="card-soft card-glass p-4 h-100">
           <h5 class="mb-3">Quick Actions</h5>
           <div class="d-grid gap-2">
             <RouterLink
               v-for="action in data.quickActions"
               :key="action.title"
               :to="action.to"
-              class="btn btn-outline-primary d-flex align-items-center gap-2"
+              class="btn btn-quick-action d-flex align-items-center gap-2"
             >
               <div
                 :class="`pill ${action.icon}`"
@@ -107,11 +107,11 @@ onMounted(async () => {
 
       <!-- reminders and to-do lists -->
       <div class="col-12 col-lg-4">
-        <div class="card-soft p-4 h-100">
+        <div class="card-soft card-glass p-4 h-100">
           <h5 class="mb-3">{{ data.reminders.title }}</h5>
           <div class="text-muted text-center py-4">
             <p>Log in to view your personalized reminders</p>
-            <RouterLink :to="data.reminders.cta?.to || '/reminder'" class="btn btn-cta w-100">
+            <RouterLink :to="data.reminders.cta?.to || '/reminder'" class="btn btn-glass-cta w-100">
               {{ data.reminders.cta?.text || 'View All Reminders' }}
             </RouterLink>
           </div>
@@ -218,17 +218,17 @@ onMounted(async () => {
 }
 
 .card-soft:nth-child(1) {
-  background: linear-gradient(135deg, var(--c-peach), #ffd4c4);
+  background: linear-gradient(135deg, #ffe0e6, #fff0e6);
   color: #8b4513;
 }
 
 .card-soft:nth-child(2) {
-  background: linear-gradient(135deg, var(--c-lavender), #e6d7f7);
+  background: linear-gradient(135deg, #f0e6ff, #e6f0ff);
   color: #4a4a6a;
 }
 
 .card-soft:nth-child(3) {
-  background: linear-gradient(135deg, var(--c-pink), #f8c8d8);
+  background: linear-gradient(135deg, #ffe6e8, #fef0f5);
   color: #8b2c5d;
 }
 
@@ -239,5 +239,138 @@ onMounted(async () => {
   font-size: 0.8rem;
   color: #6c757d;
   border: 1px solid #e9ecef;
+}
+
+/* Button styles - consistent with Navbar */
+.btn-cta {
+  background: linear-gradient(135deg, var(--c-peach), var(--c-pink));
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  box-shadow: var(--shadow-soft);
+  text-decoration: none;
+  display: inline-block;
+  font-weight: 600;
+  font-size: 1rem;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.btn-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+  color: #fff;
+  text-decoration: none;
+}
+
+.btn-ghost {
+  background: #fff;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  box-shadow: var(--shadow-soft);
+  color: #6b7280;
+  text-decoration: none;
+  display: inline-block;
+  font-weight: 600;
+  font-size: 1rem;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.btn-ghost:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  color: #374151;
+  text-decoration: none;
+  border-color: var(--c-lavender);
+}
+
+/* 透明玻璃卡片效果 - 保持马卡龙背景，按钮透明 */
+.card-glass {
+  /* 保持原有的马卡龙色系背景，不覆盖 */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.card-glass h5 {
+  color: #1f2937 !important;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.card-glass p {
+  color: #4b5563 !important;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+/* Quick Actions按钮样式 - 透明玻璃效果 */
+.btn-quick-action {
+  background: rgba(255, 255, 255, 0.2);
+  color: #1f2937;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  display: inline-block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.btn-quick-action:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: #111827;
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* View All Reminders按钮 - 透明玻璃效果 */
+.btn-glass-cta {
+  background: rgba(255, 255, 255, 0.2);
+  color: #1f2937;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 999px;
+  padding: 0.55rem 1rem;
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  text-decoration: none;
+  display: inline-block;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.btn-glass-cta:hover {
+  background: rgba(255, 255, 255, 0.3);
+  color: #111827;
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  text-decoration: none;
+  border-color: rgba(255, 255, 255, 0.4);
 }
 </style>
