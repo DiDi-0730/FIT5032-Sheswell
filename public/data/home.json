@@ -1,0 +1,25 @@
+{
+  "hero": {
+    "title": "Sheswell — Women's Holistic Health",
+    "subtitle": "Personalized health management · Smart reminders · Community support",
+    "kpi": { "label": "Wellness", "unit": "score" }
+  },
+  "today": { "title": "Today's Overview" },
+  "quickActions": [
+    { "icon": "lavender", "title": "Symptom Log", "to": "/record" },
+    { "icon": "peach", "title": "Cycle Tracking", "to": "/learn" },
+    { "icon": "blue", "title": "Posture Library", "to": "/learn" },
+    { "icon": "pink", "title": "Ask Community", "to": "/community" }
+  ],
+  "reminders": {
+    "title": "Smart Reminders & To-dos",
+    "cta": { "text": "View All Reminders", "to": "/reminder" }
+  },
+  "tags": [
+    "Parenting & Pelvic Floor",
+    "Fertility & Pregnancy",
+    "Young Women",
+    "Perimenopause",
+    "Post-op Recovery"
+  ]
+}
