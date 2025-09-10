@@ -1,22 +1,27 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
 
 const router = useRouter()
+const { login, init } = useAuth()
+onMounted(() => {
+  init()
+})
 
-/** Form data */
+/* Form data */
 const formData = ref({
   email: '',
   password: '',
 })
 
-/** Error states */
+/* Error states */
 const errors = ref({
   email: null,
   password: null,
 })
 
-/** Email validation */
+/* Email validation */
 const validateEmail = (blur) => {
   const email = formData.value.email
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -27,7 +32,7 @@ const validateEmail = (blur) => {
   }
 }
 
-/** Password validation - consistent with Signup page */
+/* Password validation - consistent with Signup page */
 const validatePassword = (blur) => {
   const password = formData.value.password
   const minLength = 8
@@ -51,7 +56,7 @@ const validatePassword = (blur) => {
   }
 }
 
-/** Form submission */
+/* Form submission */
 const submitForm = () => {
   // Validate all fields
   validateEmail(true)
@@ -67,10 +72,17 @@ const submitForm = () => {
     localStorage.setItem('userId', 'user-123')
 
     router.push('/')
+    const res = login(formData.value.email, formData.value.password)
+    if (res.success) {
+      const redirect = router.currentRoute.value.query?.redirect || '/'
+      router.replace(redirect)
+    } else {
+      errors.value.password = res.message || 'Login failed'
+    }
   }
 }
 
-/** Clear form and errors */
+/* Clear form and errors */
 const clearForm = () => {
   formData.value = {
     email: '',
