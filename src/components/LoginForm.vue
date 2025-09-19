@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
+import { validateInput, sanitizeInput, ValidationPatterns } from '@/utils/security'
 
 const router = useRouter()
 const { login, init } = useAuth()
@@ -21,43 +22,50 @@ const errors = ref({
   password: null,
 })
 
-/* Email validation */
+/* Email validation with security checks */
 const validateEmail = (blur) => {
   const email = formData.value.email
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailPattern.test(email)) {
+
+  // Security validation first
+  if (!validateInput(email, 'email')) {
+    if (blur) errors.value.email = 'Invalid email format or contains unsafe characters.'
+    return
+  }
+
+  // Standard email validation
+  if (!ValidationPatterns.email.test(email)) {
     if (blur) errors.value.email = 'Please enter a valid email address.'
   } else {
     errors.value.email = null
   }
 }
 
-/* Password validation - consistent with Signup page */
+/* Password validation with security checks */
 const validatePassword = (blur) => {
   const password = formData.value.password
-  const minLength = 8
-  const hasUppercase = /[A-Z]/.test(password)
-  const hasLowercase = /[a-z]/.test(password)
-  const hasNumber = /\d/.test(password)
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password)
 
-  if (password.length < minLength) {
-    if (blur) errors.value.password = `Password must be at least ${minLength} characters long.`
-  } else if (!hasUppercase) {
-    if (blur) errors.value.password = 'Password must contain at least one uppercase letter.'
-  } else if (!hasLowercase) {
-    if (blur) errors.value.password = 'Password must contain at least one lowercase letter.'
-  } else if (!hasNumber) {
-    if (blur) errors.value.password = 'Password must contain at least one number.'
-  } else if (!hasSpecialChar) {
-    if (blur) errors.value.password = 'Password must contain at least one special character.'
+  // Security validation first
+  if (!validateInput(password, 'password')) {
+    if (blur) errors.value.password = 'Password contains unsafe characters or invalid format.'
+    return
+  }
+
+  // Standard password validation using security pattern
+  if (!ValidationPatterns.password.test(password)) {
+    if (blur)
+      errors.value.password =
+        'Password must be at least 8 characters with uppercase, lowercase, number, and special character.'
   } else {
     errors.value.password = null
   }
 }
 
-/* Form submission */
+/* Form submission with security measures */
 const submitForm = () => {
+  // Sanitize inputs before validation
+  formData.value.email = sanitizeInput(formData.value.email)
+  formData.value.password = sanitizeInput(formData.value.password)
+
   // Validate all fields
   validateEmail(true)
   validatePassword(true)
@@ -67,11 +75,6 @@ const submitForm = () => {
     !errors.value.email && !errors.value.password && formData.value.email && formData.value.password
 
   if (isValid) {
-    // Mock login success
-    localStorage.setItem('authToken', 'mock-jwt-token')
-    localStorage.setItem('userId', 'user-123')
-
-    router.push('/')
     const res = login(formData.value.email, formData.value.password)
     if (res.success) {
       const redirect = router.currentRoute.value.query?.redirect || '/'

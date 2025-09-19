@@ -1,0 +1,25 @@
+# Security Configuration for Sheswell Application
+
+## Content Security Policy (CSP)
+# Add the following meta tag to index.html for basic CSP protection:
+# <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; frame-ancestors 'none';">
+
+## Security Headers (for production server)
+# X-Content-Type-Options: nosniff
+# X-Frame-Options: DENY
+# X-XSS-Protection: 1; mode=block
+# Referrer-Policy: strict-origin-when-cross-origin
+
+## Security Best Practices Implemented:
+1. XSS Protection: Input validation and sanitization
+2. Client-side validation: Enhanced form validation with security patterns
+3. Safe data storage: localStorage validation before use
+4. Input sanitization: All user inputs are sanitized
+5. No sensitive data in client: No API keys or secrets in client-side code
+
+## Additional Security Measures:
+- HTML entity encoding for XSS prevention
+- Input length limits to prevent buffer overflow attacks
+- Pattern validation to block malicious input
+- Secure random token generation capability
+- Safe localStorage data handling

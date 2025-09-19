@@ -1,8 +1,14 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
 
 const router = useRouter()
+const { signup, init } = useAuth()
+
+onMounted(() => {
+  init()
+})
 
 /** Form data */
 const formData = ref({
@@ -87,14 +93,24 @@ const submitForm = () => {
     !errors.value.password &&
     !errors.value.doubleCheckPassword
   ) {
-    // Simulate successful signup without storing personal data
-    console.log('Signup successful (demo mode)')
+    const result = signup(formData.value.username, formData.value.email, formData.value.password)
 
-    alert('Sign Up successful! Welcome to Sheswell!')
-    // Redirect to homepage after successful signup
-    setTimeout(() => {
-      router.push('/')
-    }, 1500)
+    if (result.success) {
+      alert(result.message || 'Sign Up successful! Welcome to Sheswell!')
+      // Redirect to homepage after successful signup
+      setTimeout(() => {
+        router.push('/')
+      }, 1500)
+    } else {
+      // Show error message
+      if (result.message.includes('Email')) {
+        errors.value.email = result.message
+      } else if (result.message.includes('Username')) {
+        errors.value.username = result.message
+      } else {
+        alert(result.message)
+      }
+    }
   }
 }
 

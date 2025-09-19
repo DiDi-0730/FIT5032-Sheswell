@@ -11,32 +11,50 @@
         <li class="nav-item">
           <RouterLink class="nav-link-soft nav-link" to="/">Home</RouterLink>
         </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link-soft nav-link" to="/learn">Learn</RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link-soft nav-link" to="/record">Record</RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link-soft nav-link" to="/reminder">Reminder</RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link-soft nav-link" to="/my-plan">My Plan</RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link-soft nav-link" to="/community">Community</RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link-soft nav-link" to="/profile">Profile</RouterLink>
-        </li>
+
+        <!-- Navigation menu for authenticated users -->
+        <template v-if="state.isAuthenticated">
+          <li class="nav-item">
+            <RouterLink class="nav-link-soft nav-link" to="/learn">Learn</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link-soft nav-link" to="/record">Record</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link-soft nav-link" to="/reminder">Reminder</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link-soft nav-link" to="/my-plan">My Plan</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link-soft nav-link" to="/community">Community</RouterLink>
+          </li>
+          <li class="nav-item" v-if="!isAdmin()">
+            <RouterLink class="nav-link-soft nav-link" to="/profile">Profile</RouterLink>
+          </li>
+          <!-- Admin menu item (replaces Profile for admin users) -->
+          <li class="nav-item" v-if="isAdmin()">
+            <RouterLink class="nav-link-soft nav-link" to="/admin">Admin</RouterLink>
+          </li>
+        </template>
       </ul>
 
       <!-- Right: Button group -->
       <div class="d-flex align-items-center gap-2 ms-auto">
         <!-- Desktop buttons -->
         <div class="d-none d-custom-flex gap-2">
-          <RouterLink class="btn btn-ghost" to="/signup">Sign up</RouterLink>
-          <RouterLink class="btn btn-cta" to="/login">Log in</RouterLink>
+          <!-- Show login/signup buttons when not authenticated -->
+          <template v-if="!state.isAuthenticated">
+            <RouterLink class="btn btn-ghost" to="/signup">Sign up</RouterLink>
+            <RouterLink class="btn btn-cta" to="/login">Log in</RouterLink>
+          </template>
+          <!-- Show user info and logout when authenticated -->
+          <template v-else>
+            <span class="user-welcome">
+              <span class="user-name">{{ state.user?.name }}</span>
+            </span>
+            <button class="btn btn-ghost" @click="handleLogout">Logout</button>
+          </template>
         </div>
 
         <!-- Hamburger menu button -->
@@ -58,30 +76,53 @@
           <li class="nav-item">
             <RouterLink class="nav-link-soft nav-link" to="/">Home</RouterLink>
           </li>
-          <li class="nav-item">
-            <RouterLink class="nav-link-soft nav-link" to="/learn">Learn</RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink class="nav-link-soft nav-link" to="/record">Record</RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink class="nav-link-soft nav-link" to="/reminder">Reminder</RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink class="nav-link-soft nav-link" to="/my-plan">My Plan</RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink class="nav-link-soft nav-link" to="/community">Community</RouterLink>
-          </li>
-          <li class="nav-item">
-            <RouterLink class="nav-link-soft nav-link" to="/profile">Profile</RouterLink>
-          </li>
-          <li class="nav-item d-custom-none">
-            <RouterLink class="btn btn-ghost w-100" to="/signup">Sign up</RouterLink>
-          </li>
-          <li class="nav-item d-custom-none">
-            <RouterLink class="btn btn-cta w-100" to="/login">Log in</RouterLink>
-          </li>
+
+          <!-- Mobile menu - authenticated users -->
+          <template v-if="state.isAuthenticated">
+            <li class="nav-item">
+              <RouterLink class="nav-link-soft nav-link" to="/learn">Learn</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link-soft nav-link" to="/record">Record</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link-soft nav-link" to="/reminder">Reminder</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link-soft nav-link" to="/my-plan">My Plan</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link-soft nav-link" to="/community">Community</RouterLink>
+            </li>
+            <li class="nav-item" v-if="!isAdmin()">
+              <RouterLink class="nav-link-soft nav-link" to="/profile">Profile</RouterLink>
+            </li>
+
+            <!-- Admin mobile menu -->
+            <li class="nav-item" v-if="isAdmin()">
+              <RouterLink class="nav-link-soft nav-link" to="/admin">Admin</RouterLink>
+            </li>
+          </template>
+
+          <!-- Mobile auth buttons -->
+          <template v-if="!state.isAuthenticated">
+            <li class="nav-item d-custom-none">
+              <RouterLink class="btn btn-ghost w-100" to="/signup">Sign up</RouterLink>
+            </li>
+            <li class="nav-item d-custom-none">
+              <RouterLink class="btn btn-cta w-100" to="/login">Log in</RouterLink>
+            </li>
+          </template>
+          <template v-else>
+            <li class="nav-item d-custom-none">
+              <div class="user-welcome-mobile">
+                <div class="mobile-user-name">{{ state.user?.name }}</div>
+              </div>
+            </li>
+            <li class="nav-item d-custom-none">
+              <button class="btn btn-ghost w-100" @click="handleLogout">Logout</button>
+            </li>
+          </template>
         </ul>
       </div>
     </div>
@@ -91,11 +132,22 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { RouterLink } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
+
+// Authentication state and functions
+const { state, init, logout, isAdmin, getRoleDisplayName } = useAuth()
 
 // Hamburger menu state management
 const isCollapsed = ref(true)
 
-// Toggle hamburger menu show/hide
+// Handle user logout and redirect to home
+const handleLogout = () => {
+  logout()
+  // Force page reload to clear all state
+  window.location.href = '/'
+}
+
+// Toggle mobile hamburger menu visibility
 const toggleCollapse = () => {
   isCollapsed.value = !isCollapsed.value
   const collapseElement = document.getElementById('mainNav')
@@ -108,8 +160,9 @@ const toggleCollapse = () => {
   }
 }
 
-// Initialize Bootstrap collapse after component mount
+// Component initialization
 onMounted(() => {
+  init() // Restore authentication state from localStorage
   const collapseElement = document.getElementById('mainNav')
   if (collapseElement) {
     collapseElement.addEventListener('show.bs.collapse', () => {
@@ -215,5 +268,69 @@ onMounted(() => {
   border-radius: 999px;
   padding: 0.55rem 1rem;
   box-shadow: var(--shadow-soft);
+}
+
+/* Role-specific navigation styles */
+.admin-link {
+  background: linear-gradient(135deg, #f59e0b, #f97316) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  font-weight: 600 !important;
+}
+
+.role-icon {
+  margin-right: 0.25rem;
+}
+
+/* User welcome styles */
+.user-welcome {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-right: 0.75rem;
+}
+
+.user-name {
+  color: #2f3b52;
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.user-role {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  margin-top: 0.1rem;
+}
+
+.role-admin {
+  background: linear-gradient(135deg, #f59e0b, #f97316);
+  color: white;
+}
+
+.user-welcome-mobile {
+  padding: 0.75rem 1rem;
+  display: block;
+  text-align: center;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.mobile-user-name {
+  color: #2f3b52;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.mobile-user-role {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+  display: inline-block;
 }
 </style>
