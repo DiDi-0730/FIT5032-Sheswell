@@ -113,3 +113,4 @@ const hasAccess = computed(() => {
   font-weight: 500;
 }
 </style>
+

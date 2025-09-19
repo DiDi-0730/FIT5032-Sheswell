@@ -117,3 +117,4 @@ export function validateStorageData(data, expectedKeys = []) {
     return null
   }
 }
+

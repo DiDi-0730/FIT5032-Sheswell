@@ -290,9 +290,7 @@ onMounted(async () => {
   border-color: var(--c-lavender);
 }
 
-/* 透明玻璃卡片效果 - 保持马卡龙背景，按钮透明 */
 .card-glass {
-  /* 保持原有的马卡龙色系背景，不覆盖 */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -312,7 +310,7 @@ onMounted(async () => {
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
 }
 
-/* Quick Actions按钮样式 - 透明玻璃效果 */
+/* Quick Actions */
 .btn-quick-action {
   background: rgba(255, 255, 255, 0.2);
   color: #1f2937;
@@ -343,7 +341,7 @@ onMounted(async () => {
   border-color: rgba(255, 255, 255, 0.4);
 }
 
-/* View All Reminders按钮 - 透明玻璃效果 */
+/* View All Reminders */
 .btn-glass-cta {
   background: rgba(255, 255, 255, 0.2);
   color: #1f2937;

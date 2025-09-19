@@ -121,7 +121,7 @@ const clearForm = () => {
             <!-- Email input -->
             <div class="mb-4">
               <label for="email" class="form-label fw-semibold">
-                <span class="label-icon">📧</span> Email Address
+                <span class="label-icon">@</span> Email Address
               </label>
               <input
                 type="email"
@@ -138,7 +138,7 @@ const clearForm = () => {
             <!-- Password input -->
             <div class="mb-5">
               <label for="password" class="form-label fw-semibold">
-                <span class="label-icon">🔒</span> Password
+                <span class="label-icon">*</span> Password
               </label>
               <input
                 type="password"
@@ -155,10 +155,10 @@ const clearForm = () => {
             <!-- Action buttons -->
             <div class="d-flex gap-3 justify-content-center mb-4">
               <button type="submit" class="btn btn-cta px-4 py-2">
-                <span class="btn-icon">🚀</span> Sign In
+                <span class="btn-icon">-></span> Sign In
               </button>
               <button type="button" class="btn btn-ghost px-4 py-2" @click="clearForm">
-                <span class="btn-icon">🔄</span> Clear
+                <span class="btn-icon">x</span> Clear
               </button>
             </div>
 
