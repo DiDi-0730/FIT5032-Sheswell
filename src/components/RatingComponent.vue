@@ -11,7 +11,7 @@
           @mouseleave="hoverRating = 0"
           @click="setRating(star)"
         >
-          ★
+          *
         </span>
       </div>
       <div class="rating-info">
@@ -27,8 +27,6 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useAuth } from '@/composables/useAuth'
-import { validateStorageData, sanitizeInput } from '@/utils/security'
 
 const props = defineProps({
   itemId: {
@@ -41,8 +39,8 @@ const props = defineProps({
   },
 })
 
-const { getCurrentUser } = useAuth()
-const currentUser = getCurrentUser()
+// Removed auth composable usage
+const currentUser = null
 
 // Rating state
 const currentRating = ref(0)
@@ -52,19 +50,16 @@ const ratings = ref([])
 
 // Load ratings from localStorage with security validation
 const loadRatings = () => {
-  const savedRatings = localStorage.getItem(`ratings_${sanitizeInput(props.itemId)}`)
+  const savedRatings = localStorage.getItem(`ratings_${props.itemId}`)
   if (savedRatings) {
-    const validatedRatings = validateStorageData(savedRatings)
-    if (validatedRatings && Array.isArray(validatedRatings)) {
-      ratings.value = validatedRatings
+    try {
+      const parsed = JSON.parse(savedRatings)
+      if (parsed && Array.isArray(parsed)) {
+        ratings.value = parsed
 
-      // Find user's existing rating
-      const userRatingData = ratings.value.find((r) => r.userId === currentUser?.id)
-      if (userRatingData) {
-        userRating.value = userRatingData.rating
-        currentRating.value = userRatingData.rating
+        // Without auth, skip user-specific state
       }
-    }
+    } catch (e) {}
   }
 }
 
@@ -75,25 +70,12 @@ const saveRatings = () => {
 
 // Set user rating
 const setRating = (rating) => {
-  if (!currentUser) return
-
   currentRating.value = rating
   userRating.value = rating
 
   // Update or add user rating
-  const existingRatingIndex = ratings.value.findIndex((r) => r.userId === currentUser.id)
-  const ratingData = {
-    userId: currentUser.id,
-    userName: currentUser.name,
-    rating: rating,
-    timestamp: new Date().toISOString(),
-  }
-
-  if (existingRatingIndex >= 0) {
-    ratings.value[existingRatingIndex] = ratingData
-  } else {
-    ratings.value.push(ratingData)
-  }
+  const ratingData = { rating, timestamp: new Date().toISOString() }
+  ratings.value = [ratingData]
 
   saveRatings()
 }

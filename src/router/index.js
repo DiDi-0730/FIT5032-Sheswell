@@ -3,18 +3,9 @@ import HomePage from '../components/HomePage.vue'
 import SignupForm from '../components/SignupForm.vue'
 import LoginForm from '../components/LoginForm.vue'
 import AdminPanel from '../components/AdminPanel.vue'
-import UnauthorizedPage from '../components/UnauthorizedPage.vue'
 import CommunityPage from '../components/CommunityPage.vue'
-import { useRouteGuard } from '../composables/useRouteGuard'
+import { auth } from '../firebase'
 
-// Legacy stub component factory - kept for backwards compatibility
-const stub = (name) => ({
-  name: `stub-${name}`,
-  template: `<div class="container py-5">
-               <h2 class="mb-3">${name}</h2>
-               <p class="text-muted">Coming soon...</p>
-             </div>`,
-})
 
 // Simple page component factory for demo pages
 const simplePage = (name) => ({
@@ -27,63 +18,83 @@ const simplePage = (name) => ({
 
 const routes = [
   // Public routes - accessible without authentication
-  { path: '/', name: 'home', component: HomePage },
+  { path: '/', redirect: '/login' }, // Default redirect to login
   { path: '/signup', name: 'signup', component: SignupForm },
   { path: '/login', name: 'login', component: LoginForm },
 
   // Protected routes - require authentication
+  { path: '/home', name: 'home', component: HomePage, meta: { requiresAuth: true } },
   {
     path: '/learn',
     name: 'learn',
     component: simplePage('Learn'),
-    beforeEnter: useRouteGuard().requireAuth,
+    meta: { requiresAuth: true }
   },
   {
     path: '/record',
     name: 'record',
     component: simplePage('Record'),
-    beforeEnter: useRouteGuard().requireAuth,
+    meta: { requiresAuth: true }
   },
   {
     path: '/reminder',
     name: 'reminder',
     component: simplePage('Reminder'),
-    beforeEnter: useRouteGuard().requireAuth,
+    meta: { requiresAuth: true }
   },
   {
     path: '/my-plan',
     name: 'my-plan',
     component: simplePage('My Plan'),
-    beforeEnter: useRouteGuard().requireAuth,
+    meta: { requiresAuth: true }
   },
   {
     path: '/community',
     name: 'community',
     component: CommunityPage,
-    beforeEnter: useRouteGuard().requireAuth,
+    meta: { requiresAuth: true }
   },
   {
     path: '/profile',
     name: 'profile',
     component: simplePage('Profile'),
-    beforeEnter: useRouteGuard().requireAuth,
+    meta: { requiresAuth: true }
   },
-
-  // Admin-only routes - require admin role
   {
     path: '/admin',
     name: 'admin',
     component: AdminPanel,
-    beforeEnter: useRouteGuard().requireAdmin,
+    meta: { requiresAuth: true }
   },
 
   // System routes
-  { path: '/unauthorized', name: 'unauthorized', component: UnauthorizedPage },
-  { path: '/:pathMatch(.*)*', redirect: '/' }, // Catch-all route
+  { path: '/:pathMatch(.*)*', redirect: '/login' }, // Catch-all route
 ]
 
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes,
   linkExactActiveClass: 'is-exact',
 })
+
+// Route guard: check Firebase authentication status
+router.beforeEach((to, from, next) => {
+  // Check if authentication is required
+  if (to.meta.requiresAuth) {
+    // Check Firebase authentication status
+    const user = auth.currentUser
+
+    if (!user) {
+      // Not logged in, redirect to login page
+      next('/login')
+    } else {
+      // Logged in, allow access
+      next()
+    }
+  } else {
+    // Pages that don't require authentication, allow direct access
+    next()
+  }
+})
+
+export default router

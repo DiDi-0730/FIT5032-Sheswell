@@ -1,14 +1,30 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuth } from '@/composables/useAuth'
-import { validateInput, sanitizeInput, ValidationPatterns } from '@/utils/security'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../firebase'
 
 const router = useRouter()
-const { login, init } = useAuth()
-onMounted(() => {
-  init()
-})
+
+// Firebase error message handler
+const getFirebaseErrorMessage = (errorCode) => {
+  switch (errorCode) {
+    case 'auth/user-not-found':
+      return 'No user found with this email address.'
+    case 'auth/wrong-password':
+      return 'Incorrect password.'
+    case 'auth/invalid-credential':
+      return 'Invalid email or password. Please check your credentials.'
+    case 'auth/invalid-email':
+      return 'Invalid email address.'
+    case 'auth/user-disabled':
+      return 'This user account has been disabled.'
+    case 'auth/too-many-requests':
+      return 'Too many failed attempts. Please try again later.'
+    default:
+      return 'Login failed. Please check your credentials.'
+  }
+}
 
 /* Form data */
 const formData = ref({
@@ -22,50 +38,35 @@ const errors = ref({
   password: null,
 })
 
-/* Email validation with security checks */
+/* Loading state */
+const loading = ref(false)
+
+/* Email validation */
 const validateEmail = (blur) => {
   const email = formData.value.email
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-  // Security validation first
-  if (!validateInput(email, 'email')) {
-    if (blur) errors.value.email = 'Invalid email format or contains unsafe characters.'
-    return
-  }
-
-  // Standard email validation
-  if (!ValidationPatterns.email.test(email)) {
+  if (!emailPattern.test(email)) {
     if (blur) errors.value.email = 'Please enter a valid email address.'
   } else {
     errors.value.email = null
   }
 }
 
-/* Password validation with security checks */
+/* Password validation */
 const validatePassword = (blur) => {
   const password = formData.value.password
+  const minLength = 6 // Firebase minimum requirement
 
-  // Security validation first
-  if (!validateInput(password, 'password')) {
-    if (blur) errors.value.password = 'Password contains unsafe characters or invalid format.'
-    return
-  }
-
-  // Standard password validation using security pattern
-  if (!ValidationPatterns.password.test(password)) {
-    if (blur)
-      errors.value.password =
-        'Password must be at least 8 characters with uppercase, lowercase, number, and special character.'
+  if (password.length < minLength) {
+    if (blur) errors.value.password = `Password must be at least ${minLength} characters long.`
   } else {
     errors.value.password = null
   }
 }
 
-/* Form submission with security measures */
-const submitForm = () => {
-  // Sanitize inputs before validation
-  formData.value.email = sanitizeInput(formData.value.email)
-  formData.value.password = sanitizeInput(formData.value.password)
-
+/* Form submission */
+const submitForm = async () => {
   // Validate all fields
   validateEmail(true)
   validatePassword(true)
@@ -75,12 +76,24 @@ const submitForm = () => {
     !errors.value.email && !errors.value.password && formData.value.email && formData.value.password
 
   if (isValid) {
-    const res = login(formData.value.email, formData.value.password)
-    if (res.success) {
-      const redirect = router.currentRoute.value.query?.redirect || '/'
-      router.replace(redirect)
-    } else {
-      errors.value.password = res.message || 'Login failed'
+    try {
+      loading.value = true
+      // Firebase authentication
+      await signInWithEmailAndPassword(auth, formData.value.email, formData.value.password)
+
+      // Login successful - redirect based on email domain
+      if (formData.value.email.endsWith('@admin.com')) {
+        router.push('/admin')
+      } else {
+        router.push('/home')
+      }
+    } catch (error) {
+      // Login failed
+      console.error('Login error:', error.message)
+      console.error('Error code:', error.code) // Debug: log the actual error code
+      errors.value.password = getFirebaseErrorMessage(error.code)
+    } finally {
+      loading.value = false
     }
   }
 }
@@ -112,7 +125,7 @@ const clearForm = () => {
                 <div class="dot dot-pink"></div>
                 <div class="dot dot-blue"></div>
               </div>
-              <h1 class="login-title">Welcome Back</h1>
+              <h1 class="login-title">Welcome</h1>
               <p class="login-subtitle">Sign in to your Sheswell account</p>
             </div>
           </div>
@@ -154,10 +167,10 @@ const clearForm = () => {
 
             <!-- Action buttons -->
             <div class="d-flex gap-3 justify-content-center mb-4">
-              <button type="submit" class="btn btn-cta px-4 py-2">
-                <span class="btn-icon"></span> Sign In
+              <button type="submit" class="btn btn-cta px-4 py-2" :disabled="loading">
+                <span class="btn-icon"></span> {{ loading ? 'Signing In...' : 'Sign In' }}
               </button>
-              <button type="button" class="btn btn-ghost px-4 py-2" @click="clearForm">
+              <button type="button" class="btn btn-ghost px-4 py-2" @click="clearForm" :disabled="loading">
                 <span class="btn-icon"></span> Clear
               </button>
             </div>

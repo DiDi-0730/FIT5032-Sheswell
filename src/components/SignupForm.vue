@@ -1,14 +1,26 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuth } from '@/composables/useAuth'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../firebase'
 
 const router = useRouter()
-const { signup, init } = useAuth()
 
-onMounted(() => {
-  init()
-})
+// Firebase error message handler
+const getFirebaseErrorMessage = (errorCode) => {
+  switch (errorCode) {
+    case 'auth/email-already-in-use':
+      return 'This email address is already in use.'
+    case 'auth/invalid-email':
+      return 'Invalid email address.'
+    case 'auth/weak-password':
+      return 'Password should be at least 6 characters.'
+    case 'auth/operation-not-allowed':
+      return 'Email/password accounts are not enabled.'
+    default:
+      return 'Registration failed. Please try again.'
+  }
+}
 
 /** Form data */
 const formData = ref({
@@ -25,6 +37,9 @@ const errors = ref({
   password: null,
   doubleCheckPassword: null,
 })
+
+/** Loading state */
+const loading = ref(false)
 
 /** Username validation: at least 4 characters */
 const validateName = (blur) => {
@@ -81,7 +96,7 @@ const validateDoubleCheckPassword = (blur) => {
 }
 
 /** Submit form */
-const submitForm = () => {
+const submitForm = async () => {
   validateName(true)
   validateEmail(true)
   validatePassword(true)
@@ -93,23 +108,32 @@ const submitForm = () => {
     !errors.value.password &&
     !errors.value.doubleCheckPassword
   ) {
-    const result = signup(formData.value.username, formData.value.email, formData.value.password)
+    // Firebase registration
+    try {
+      loading.value = true
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.value.email, formData.value.password)
 
-    if (result.success) {
-      alert(result.message || 'Sign Up successful! Welcome to Sheswell!')
-      // Redirect to homepage after successful signup
-      setTimeout(() => {
-        router.push('/')
-      }, 1500)
-    } else {
-      // Show error message
-      if (result.message.includes('Email')) {
-        errors.value.email = result.message
-      } else if (result.message.includes('Username')) {
-        errors.value.username = result.message
+      // Registration successful
+      const user = userCredential.user
+      console.log('Registration successful:', user.email)
+      alert('Registration successful! Welcome to Sheswell!')
+
+      // Auto-login after registration and redirect based on email domain
+      if (formData.value.email.endsWith('@admin.com')) {
+        router.push('/admin')
       } else {
-        alert(result.message)
+        router.push('/home')
       }
+    } catch (error) {
+      // Registration failed
+      console.error('Registration error:', error.message)
+      if (error.code === 'auth/email-already-in-use') {
+        errors.value.email = getFirebaseErrorMessage(error.code)
+      } else {
+        alert(getFirebaseErrorMessage(error.code))
+      }
+    } finally {
+      loading.value = false
     }
   }
 }
@@ -156,7 +180,7 @@ const clearForm = () => {
             <!-- Username -->
             <div class="mb-4">
               <label for="username" class="form-label fw-semibold">
-                <span class="label-icon">👤</span> Username
+                <span class="label-icon"></span> Username
               </label>
               <input
                 type="text"
@@ -173,7 +197,7 @@ const clearForm = () => {
             <!-- Email -->
             <div class="mb-4">
               <label for="email" class="form-label fw-semibold">
-                <span class="label-icon">📧</span> Email Address
+                <span class="label-icon"></span> Email Address
               </label>
               <input
                 type="email"
@@ -190,7 +214,7 @@ const clearForm = () => {
             <!-- Password -->
             <div class="mb-4">
               <label for="password" class="form-label fw-semibold">
-                <span class="label-icon">🔒</span> Password
+                <span class="label-icon"></span> Password
               </label>
               <input
                 type="password"
@@ -207,7 +231,7 @@ const clearForm = () => {
             <!-- Confirm Password -->
             <div class="mb-5">
               <label for="doubleCheckPassword" class="form-label fw-semibold">
-                <span class="label-icon">✅</span> Confirm Password
+                <span class="label-icon"></span> Confirm Password
               </label>
               <input
                 type="password"
@@ -225,11 +249,11 @@ const clearForm = () => {
 
             <!-- Action buttons -->
             <div class="d-flex gap-3 justify-content-center mb-4">
-              <button type="submit" class="btn btn-cta px-4 py-2">
-                <span class="btn-icon">✨</span> Create Account
+              <button type="submit" class="btn btn-cta px-4 py-2" :disabled="loading">
+                <span class="btn-icon"></span> {{ loading ? 'Creating Account...' : 'Create Account' }}
               </button>
-              <button type="button" class="btn btn-ghost px-4 py-2" @click="clearForm">
-                <span class="btn-icon">🔄</span> Clear
+              <button type="button" class="btn btn-ghost px-4 py-2" @click="clearForm" :disabled="loading">
+                <span class="btn-icon"></span> Clear
               </button>
             </div>
 

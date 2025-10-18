@@ -2,18 +2,71 @@
   <nav class="nav-soft navbar navbar-expand-custom navbar-light px-3 my-3">
     <div class="container-fluid align-items-center d-flex">
       <!-- Left: Brand -->
-      <RouterLink class="navbar-brand d-flex align-items-center gap-2 fw-semibold" to="/">
+      <RouterLink class="navbar-brand d-flex align-items-center gap-2 fw-semibold" to="/home">
         <span class="brand-dot"></span> Sheswell
       </RouterLink>
 
       <!-- Center: Menu (same line as brand) -->
       <ul class="navbar-nav nav-center d-none d-custom-flex gap-3">
         <li class="nav-item">
-          <RouterLink class="nav-link-soft nav-link" to="/">Home</RouterLink>
+          <RouterLink class="nav-link-soft nav-link" to="/home">Home</RouterLink>
         </li>
+        <li class="nav-item">
+          <RouterLink class="nav-link-soft nav-link" to="/learn">Learn</RouterLink>
+        </li>
+        <li class="nav-item">
+          <RouterLink class="nav-link-soft nav-link" to="/record">Record</RouterLink>
+        </li>
+        <li class="nav-item">
+          <RouterLink class="nav-link-soft nav-link" to="/reminder">Reminder</RouterLink>
+        </li>
+        <li class="nav-item">
+          <RouterLink class="nav-link-soft nav-link" to="/my-plan">My Plan</RouterLink>
+        </li>
+        <li class="nav-item">
+          <RouterLink class="nav-link-soft nav-link" to="/community">Community</RouterLink>
+        </li>
+        <li class="nav-item">
+          <RouterLink class="nav-link-soft nav-link" to="/profile">Profile</RouterLink>
+        </li>
+        <li class="nav-item">
+          <RouterLink class="nav-link-soft nav-link" to="/admin">Admin</RouterLink>
+        </li>
+      </ul>
 
-        <!-- Navigation menu for authenticated users -->
-        <template v-if="state.isAuthenticated">
+      <!-- Right: Button group -->
+      <div class="d-flex align-items-center gap-2 ms-auto">
+        <!-- Desktop buttons -->
+        <div class="d-none d-custom-flex gap-2">
+          <template v-if="!isLoggedIn">
+            <RouterLink class="btn btn-ghost" to="/signup">Sign up</RouterLink>
+            <RouterLink class="btn btn-cta" to="/login">Log in</RouterLink>
+          </template>
+          <template v-else>
+            <span class="user-welcome">
+              <span class="user-name">{{ userEmail }}</span>
+            </span>
+            <button class="btn btn-ghost" @click="handleLogout">Logout</button>
+          </template>
+        </div>
+
+        <!-- Hamburger menu button -->
+        <button
+          class="navbar-toggler d-custom-none"
+          type="button"
+          aria-controls="mainNav"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+
+      <!-- Collapsed menu content -->
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <RouterLink class="nav-link-soft nav-link" to="/home">Home</RouterLink>
+          </li>
           <li class="nav-item">
             <RouterLink class="nav-link-soft nav-link" to="/learn">Learn</RouterLink>
           </li>
@@ -29,83 +82,14 @@
           <li class="nav-item">
             <RouterLink class="nav-link-soft nav-link" to="/community">Community</RouterLink>
           </li>
-          <li class="nav-item" v-if="!isAdmin()">
+          <li class="nav-item">
             <RouterLink class="nav-link-soft nav-link" to="/profile">Profile</RouterLink>
           </li>
-          <!-- Admin menu item (replaces Profile for admin users) -->
-          <li class="nav-item" v-if="isAdmin()">
+          <li class="nav-item">
             <RouterLink class="nav-link-soft nav-link" to="/admin">Admin</RouterLink>
           </li>
-        </template>
-      </ul>
 
-      <!-- Right: Button group -->
-      <div class="d-flex align-items-center gap-2 ms-auto">
-        <!-- Desktop buttons -->
-        <div class="d-none d-custom-flex gap-2">
-          <!-- Show login/signup buttons when not authenticated -->
-          <template v-if="!state.isAuthenticated">
-            <RouterLink class="btn btn-ghost" to="/signup">Sign up</RouterLink>
-            <RouterLink class="btn btn-cta" to="/login">Log in</RouterLink>
-          </template>
-          <!-- Show user info and logout when authenticated -->
-          <template v-else>
-            <span class="user-welcome">
-              <span class="user-name">{{ state.user?.name }}</span>
-            </span>
-            <button class="btn btn-ghost" @click="handleLogout">Logout</button>
-          </template>
-        </div>
-
-        <!-- Hamburger menu button -->
-        <button
-          class="navbar-toggler d-custom-none"
-          type="button"
-          @click="toggleCollapse"
-          aria-controls="mainNav"
-          :aria-expanded="!isCollapsed"
-          aria-label="Toggle navigation"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
-      </div>
-
-      <!-- Collapsed menu content -->
-      <div class="collapse navbar-collapse" id="mainNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <RouterLink class="nav-link-soft nav-link" to="/">Home</RouterLink>
-          </li>
-
-          <!-- Mobile menu - authenticated users -->
-          <template v-if="state.isAuthenticated">
-            <li class="nav-item">
-              <RouterLink class="nav-link-soft nav-link" to="/learn">Learn</RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink class="nav-link-soft nav-link" to="/record">Record</RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink class="nav-link-soft nav-link" to="/reminder">Reminder</RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink class="nav-link-soft nav-link" to="/my-plan">My Plan</RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink class="nav-link-soft nav-link" to="/community">Community</RouterLink>
-            </li>
-            <li class="nav-item" v-if="!isAdmin()">
-              <RouterLink class="nav-link-soft nav-link" to="/profile">Profile</RouterLink>
-            </li>
-
-            <!-- Admin mobile menu -->
-            <li class="nav-item" v-if="isAdmin()">
-              <RouterLink class="nav-link-soft nav-link" to="/admin">Admin</RouterLink>
-            </li>
-          </template>
-
-          <!-- Mobile auth buttons -->
-          <template v-if="!state.isAuthenticated">
+          <template v-if="!isLoggedIn">
             <li class="nav-item d-custom-none">
               <RouterLink class="btn btn-ghost w-100" to="/signup">Sign up</RouterLink>
             </li>
@@ -116,7 +100,7 @@
           <template v-else>
             <li class="nav-item d-custom-none">
               <div class="user-welcome-mobile">
-                <div class="mobile-user-name">{{ state.user?.name }}</div>
+                <div class="mobile-user-name">{{ userEmail }}</div>
               </div>
             </li>
             <li class="nav-item d-custom-none">
@@ -131,47 +115,42 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { RouterLink } from 'vue-router'
-import { useAuth } from '@/composables/useAuth'
+import { useRouter } from 'vue-router'
+import { signOut, onAuthStateChanged } from 'firebase/auth'
+import { auth } from '../firebase'
 
-// Authentication state and functions
-const { state, init, logout, isAdmin, getRoleDisplayName } = useAuth()
+const router = useRouter()
+const isLoggedIn = ref(false)
+const userEmail = ref('')
 
-// Hamburger menu state management
-const isCollapsed = ref(true)
-
-// Handle user logout and redirect to home
-const handleLogout = () => {
-  logout()
-  // Force page reload to clear all state
-  window.location.href = '/'
-}
-
-// Toggle mobile hamburger menu visibility
-const toggleCollapse = () => {
-  isCollapsed.value = !isCollapsed.value
-  const collapseElement = document.getElementById('mainNav')
-  if (collapseElement) {
-    if (isCollapsed.value) {
-      collapseElement.classList.remove('show')
+// Check Firebase authentication status
+const checkAuthStatus = () => {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in
+      isLoggedIn.value = true
+      userEmail.value = user.email
     } else {
-      collapseElement.classList.add('show')
+      // User is signed out
+      isLoggedIn.value = false
+      userEmail.value = ''
     }
+  })
+}
+
+// Logout functionality
+const handleLogout = async () => {
+  try {
+    await signOut(auth)
+    router.push('/login')
+  } catch (error) {
+    console.error('Logout error:', error.message)
   }
 }
 
-// Component initialization
+// Check authentication status when component mounts
 onMounted(() => {
-  init() // Restore authentication state from localStorage
-  const collapseElement = document.getElementById('mainNav')
-  if (collapseElement) {
-    collapseElement.addEventListener('show.bs.collapse', () => {
-      isCollapsed.value = false
-    })
-    collapseElement.addEventListener('hide.bs.collapse', () => {
-      isCollapsed.value = true
-    })
-  }
+  checkAuthStatus()
 })
 </script>
 
