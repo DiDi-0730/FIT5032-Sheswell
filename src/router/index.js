@@ -4,7 +4,9 @@ import SignupForm from '../components/SignupForm.vue'
 import LoginForm from '../components/LoginForm.vue'
 import AdminPanel from '../components/AdminPanel.vue'
 import CommunityPage from '../components/CommunityPage.vue'
+import EmailForm from '../components/EmailForm.vue'
 import { auth } from '../firebase'
+import { onAuthStateChanged } from 'firebase/auth'
 
 
 // Simple page component factory for demo pages
@@ -28,6 +30,12 @@ const routes = [
     path: '/learn',
     name: 'learn',
     component: simplePage('Learn'),
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/email',
+    name: 'email',
+    component: EmailForm,
     meta: { requiresAuth: true }
   },
   {
@@ -78,18 +86,37 @@ const router = createRouter({
 })
 
 // Route guard: check Firebase authentication status
+let authReady = false
+
+// Wait for Firebase auth to initialize
+onAuthStateChanged(auth, () => {
+  authReady = true
+})
+
 router.beforeEach((to, from, next) => {
   // Check if authentication is required
   if (to.meta.requiresAuth) {
-    // Check Firebase authentication status
-    const user = auth.currentUser
-
-    if (!user) {
-      // Not logged in, redirect to login page
-      next('/login')
+    if (!authReady) {
+      // Wait for auth to initialize
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe()
+        if (user) {
+          next()
+        } else {
+          next('/login')
+        }
+      })
     } else {
-      // Logged in, allow access
-      next()
+      // Check Firebase authentication status
+      const user = auth.currentUser
+
+      if (!user) {
+        // Not logged in, redirect to login page
+        next('/login')
+      } else {
+        // Logged in, allow access
+        next()
+      }
     }
   } else {
     // Pages that don't require authentication, allow direct access

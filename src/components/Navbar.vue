@@ -27,6 +27,9 @@
           <RouterLink class="nav-link-soft nav-link" to="/community">Community</RouterLink>
         </li>
         <li class="nav-item">
+          <RouterLink class="nav-link-soft nav-link" to="/email">Email</RouterLink>
+        </li>
+        <li class="nav-item">
           <RouterLink class="nav-link-soft nav-link" to="/profile">Profile</RouterLink>
         </li>
         <li class="nav-item">
@@ -81,6 +84,9 @@
           </li>
           <li class="nav-item">
             <RouterLink class="nav-link-soft nav-link" to="/community">Community</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link-soft nav-link" to="/email">Email</RouterLink>
           </li>
           <li class="nav-item">
             <RouterLink class="nav-link-soft nav-link" to="/profile">Profile</RouterLink>
