@@ -14,17 +14,15 @@
         <li class="nav-item">
           <RouterLink class="nav-link-soft nav-link" to="/learn">Learn</RouterLink>
         </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link-soft nav-link" to="/record">Record</RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link-soft nav-link" to="/reminder">Reminder</RouterLink>
-        </li>
-        <li class="nav-item">
-          <RouterLink class="nav-link-soft nav-link" to="/my-plan">My Plan</RouterLink>
-        </li>
+
         <li class="nav-item">
           <RouterLink class="nav-link-soft nav-link" to="/community">Community</RouterLink>
+        </li>
+        <li class="nav-item">
+          <RouterLink class="nav-link-soft nav-link" to="/combined-tables">Data Insight</RouterLink>
+        </li>
+        <li class="nav-item">
+          <RouterLink class="nav-link-soft nav-link" to="/health-chart">Health Chart</RouterLink>
         </li>
         <li class="nav-item">
           <RouterLink class="nav-link-soft nav-link" to="/email">Email</RouterLink>
@@ -84,6 +82,9 @@
           </li>
           <li class="nav-item">
             <RouterLink class="nav-link-soft nav-link" to="/community">Community</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link-soft nav-link" to="/combined-tables">Data Tables</RouterLink>
           </li>
           <li class="nav-item">
             <RouterLink class="nav-link-soft nav-link" to="/email">Email</RouterLink>

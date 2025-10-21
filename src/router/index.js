@@ -26,12 +26,7 @@ const routes = [
 
   // Protected routes - require authentication
   { path: '/home', name: 'home', component: HomePage, meta: { requiresAuth: true } },
-  {
-    path: '/learn',
-    name: 'learn',
-    component: simplePage('Learn'),
-    meta: { requiresAuth: true }
-  },
+
   {
     path: '/email',
     name: 'email',
@@ -42,18 +37,6 @@ const routes = [
     path: '/record',
     name: 'record',
     component: simplePage('Record'),
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/reminder',
-    name: 'reminder',
-    component: simplePage('Reminder'),
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/my-plan',
-    name: 'my-plan',
-    component: simplePage('My Plan'),
     meta: { requiresAuth: true }
   },
   {
@@ -74,9 +57,21 @@ const routes = [
     component: AdminPanel,
     meta: { requiresAuth: true }
   },
+        {
+          path: '/combined-tables',
+          name: 'combined-tables',
+          component: () => import('../views/CombinedTablesView.vue'),
+          meta: { requiresAuth: true }
+        },
+        {
+          path: '/health-chart',
+          name: 'health-chart',
+          component: () => import('../views/FemaleHealthChart.vue'),
+          meta: { requiresAuth: true }
+        },
 
   // System routes
-  { path: '/:pathMatch(.*)*', redirect: '/login' }, // Catch-all route
+{ path: '/:pathMatch(.*)*', redirect: '/login' }, // Catch-all route
 ]
 
 const router = createRouter({
