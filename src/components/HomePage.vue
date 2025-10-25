@@ -7,15 +7,15 @@ const error = ref(null)
 const data = ref({
   hero: {
     title: "Sheswell — Women's Holistic Health",
-    subtitle: 'Personalized health management · Smart reminders · Community support',
+    subtitle: 'Personalized health management · Smart reminders · Health tracking',
     kpi: { label: 'Wellness', unit: 'score' },
   },
   today: { title: "Today's Overview" },
   quickActions: [
     { icon: 'lavender', title: 'Symptom Log', to: '/record' },
-    { icon: 'peach', title: 'Cycle Tracking', to: '/learn' },
-    { icon: 'blue', title: 'Posture Library', to: '/learn' },
-    { icon: 'pink', title: 'Ask Community', to: '/community' },
+    { icon: 'peach', title: 'Health Chart', to: '/health-chart' },
+    { icon: 'blue', title: 'Find Clinics', to: '/clinics' },
+    { icon: 'pink', title: 'Data Insight', to: '/combined-tables' },
   ],
   reminders: {
     title: 'Smart Reminders & To-dos',

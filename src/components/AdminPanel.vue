@@ -24,17 +24,7 @@
                 Overview
               </button>
             </li>
-            <li class="nav-item" role="presentation">
-              <button
-                class="nav-link"
-                :class="{ active: activeTab === 'bulk-email' }"
-                @click="activeTab = 'bulk-email'"
-                type="button"
-              >
-                <i class="bi bi-envelope-paper me-2"></i>
-                Bulk Email
-              </button>
-            </li>
+          
             <li class="nav-item" role="presentation">
               <button
                 class="nav-link"
@@ -214,7 +204,6 @@
 
 <script setup>
 import { ref } from 'vue'
-import BulkEmailForm from './BulkEmailForm.vue'
 
 // Reactive data
 const activeTab = ref('overview')

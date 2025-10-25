@@ -2,20 +2,19 @@
 import { ref, computed } from 'vue'
 import { sendMail } from '../firebase' // Firebase Functions wrapper
 
-/* ------- Form State ------- */
-const to = ref('')
+
+const to = ref('djia0019@student.monash.edu') 
 const subject = ref('')
 const body = ref('')
-const asHtml = ref(true)               // Use html field when checked; otherwise use text field
-const files = ref([])                  // File instance list
-const attachmentsBase64 = ref([])      // { filename, type, contentBase64 }[]
+const asHtml = ref(true)               
+const files = ref([])                  
+const attachmentsBase64 = ref([])      
 
-/* ------- Interaction State ------- */
+
 const loading = ref(false)
-const notice = ref('')                 // Success/failure notification
-const noticeType = ref('success')      // success | error
+const notice = ref('')                 
+const noticeType = ref('success')      
 
-/* ------- Simple Validation ------- */
 const emailList = computed(() =>
   to.value
     .split(',')
@@ -25,9 +24,8 @@ const emailList = computed(() =>
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 const emailError = computed(() => {
-  if (!to.value) return 'Please enter at least one recipient.'
-  const invalid = emailList.value.filter(e => !emailPattern.test(e))
-  return invalid.length ? `Invalid email(s): ${invalid.join(', ')}` : null
+  // No validation needed since recipient is fixed
+  return null
 })
 const subjectError = computed(() => (subject.value ? null : 'Subject is required.'))
 const bodyError = computed(() => (body.value ? null : 'Message is required.'))
@@ -40,7 +38,6 @@ function onFileChange(e) {
   selected.forEach(f => {
     const reader = new FileReader()
     reader.onload = () => {
-      // data:...;base64,XXXX -> Only take the pure base64 after comma
       const base64 = String(reader.result).split('base64,')[1]
       attachmentsBase64.value.push({
         filename: f.name,
@@ -52,7 +49,6 @@ function onFileChange(e) {
   })
 }
 
-/* ------- Send ------- */
 async function handleSend() {
   notice.value = ''
   if (emailError.value || subjectError.value || bodyError.value) {
@@ -78,7 +74,7 @@ async function handleSend() {
     console.log(res.data)
     noticeType.value = 'success'
     notice.value = 'Email sent successfully!'
-    // Clear form (also reset input when clearing attachments)
+    // Clear form 
     clearForm()
   } catch (err) {
     console.error(err)
@@ -90,7 +86,7 @@ async function handleSend() {
 }
 
 function clearForm() {
-  to.value = ''
+  // Keep recipient fixed, only clear other fields
   subject.value = ''
   body.value = ''
   files.value = []
@@ -114,12 +110,12 @@ function clearForm() {
                 <div class="dot dot-pink"></div>
                 <div class="dot dot-blue"></div>
               </div>
-              <h1 class="email-title">Send Email</h1>
-              <p class="email-subtitle">Deliver messages with attachments via Sheswell</p>
+              <h1 class="email-title">Give Feedback</h1>
+              <p class="email-subtitle">Share your thoughts and suggestions with the Sheswell team</p>
             </div>
           </div>
 
-          <!-- Success/failure notification (accessible) -->
+          <!-- Success/failure notification -->
           <div
             v-if="notice"
             :class="['alert', noticeType === 'success' ? 'alert-success' : 'alert-danger']"
@@ -133,18 +129,17 @@ function clearForm() {
             <!-- Recipients -->
             <div class="mb-4">
               <label for="to" class="form-label fw-semibold">
-                <span class="label-icon"></span> Recipients (comma separated)
+                <span class="label-icon"></span> Send to
               </label>
               <input
                 id="to"
                 class="form-control form-control-soft"
                 type="text"
                 v-model="to"
-                placeholder="e.g. alice@example.com, bob@example.com"
-                :aria-invalid="!!emailError"
-                @blur="() => {}"
+                readonly
+                style="background-color: #f8f9fa; cursor: not-allowed;"
               />
-              <div v-if="emailError" class="text-danger mt-2">{{ emailError }}</div>
+              <small class="text-muted d-block mt-2">Your feedback will be sent to the Sheswell development team</small>
             </div>
 
             <!-- Subject -->
@@ -157,7 +152,7 @@ function clearForm() {
                 class="form-control form-control-soft"
                 type="text"
                 v-model="subject"
-                placeholder="Enter subject"
+                placeholder="e.g. Bug report, Feature request, General feedback"
                 :aria-invalid="!!subjectError"
               />
               <div v-if="subjectError" class="text-danger mt-2">{{ subjectError }}</div>
@@ -171,14 +166,14 @@ function clearForm() {
               <div class="d-flex align-items-center gap-3 mb-2">
                 <label class="d-inline-flex align-items-center gap-2">
                   <input type="checkbox" v-model="asHtml" />
-                  <span>Send as HTML</span>
+                  <span>Send as HTML (recommended for better formatting)</span>
                 </label>
               </div>
               <textarea
                 class="form-control form-control-soft"
                 rows="8"
                 v-model="body"
-                placeholder="Write your message here..."
+                placeholder="Please describe your feedback, suggestions, or any issues you've encountered. The more details you provide, the better we can help!"
                 :aria-invalid="!!bodyError"
               ></textarea>
               <div v-if="bodyError" class="text-danger mt-2">{{ bodyError }}</div>
@@ -208,7 +203,7 @@ function clearForm() {
             <!-- Buttons -->
             <div class="d-flex gap-3 justify-content-center">
               <button type="submit" class="btn btn-cta px-4 py-2" :disabled="loading">
-                {{ loading ? 'Sending...' : 'Send Email' }}
+                {{ loading ? 'Sending...' : 'Send Feedback' }}
               </button>
               <button type="button" class="btn btn-ghost px-4 py-2" @click="clearForm" :disabled="loading">
                 Clear

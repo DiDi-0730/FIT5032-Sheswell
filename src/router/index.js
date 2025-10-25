@@ -3,10 +3,11 @@ import HomePage from '../components/HomePage.vue'
 import SignupForm from '../components/SignupForm.vue'
 import LoginForm from '../components/LoginForm.vue'
 import AdminPanel from '../components/AdminPanel.vue'
-import CommunityPage from '../components/CommunityPage.vue'
 import EmailForm from '../components/EmailForm.vue'
+import MapClinics from '../components/MapClinics.vue'
 import { auth } from '../firebase'
 import { onAuthStateChanged } from 'firebase/auth'
+
 
 
 // Simple page component factory for demo pages
@@ -26,23 +27,13 @@ const routes = [
 
   // Protected routes - require authentication
   { path: '/home', name: 'home', component: HomePage, meta: { requiresAuth: true } },
+  {path:'/'},
 
-  {
-    path: '/email',
-    name: 'email',
-    component: EmailForm,
-    meta: { requiresAuth: true }
-  },
+
   {
     path: '/record',
     name: 'record',
     component: simplePage('Record'),
-    meta: { requiresAuth: true }
-  },
-  {
-    path: '/community',
-    name: 'community',
-    component: CommunityPage,
     meta: { requiresAuth: true }
   },
   {
@@ -55,6 +46,18 @@ const routes = [
     path: '/admin',
     name: 'admin',
     component: AdminPanel,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/email',
+    name: 'email',
+    component: EmailForm,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/clinics',
+    name: 'clinics',
+    component: MapClinics,
     meta: { requiresAuth: true }
   },
         {

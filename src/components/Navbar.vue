@@ -12,25 +12,21 @@
           <RouterLink class="nav-link-soft nav-link" to="/home">Home</RouterLink>
         </li>
         <li class="nav-item">
-          <RouterLink class="nav-link-soft nav-link" to="/learn">Learn</RouterLink>
-        </li>
-
-        <li class="nav-item">
-          <RouterLink class="nav-link-soft nav-link" to="/community">Community</RouterLink>
-        </li>
-        <li class="nav-item">
           <RouterLink class="nav-link-soft nav-link" to="/combined-tables">Data Insight</RouterLink>
         </li>
         <li class="nav-item">
           <RouterLink class="nav-link-soft nav-link" to="/health-chart">Health Chart</RouterLink>
         </li>
         <li class="nav-item">
-          <RouterLink class="nav-link-soft nav-link" to="/email">Email</RouterLink>
+          <RouterLink class="nav-link-soft nav-link" to="/clinics">Find Clinics</RouterLink>
+        </li>
+        <li class="nav-item">
+          <RouterLink class="nav-link-soft nav-link" to="/email">Give Feedback</RouterLink>
         </li>
         <li class="nav-item">
           <RouterLink class="nav-link-soft nav-link" to="/profile">Profile</RouterLink>
         </li>
-        <li class="nav-item">
+        <li v-if="isAdmin" class="nav-item">
           <RouterLink class="nav-link-soft nav-link" to="/admin">Admin</RouterLink>
         </li>
       </ul>
@@ -69,9 +65,6 @@
             <RouterLink class="nav-link-soft nav-link" to="/home">Home</RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link-soft nav-link" to="/learn">Learn</RouterLink>
-          </li>
-          <li class="nav-item">
             <RouterLink class="nav-link-soft nav-link" to="/record">Record</RouterLink>
           </li>
           <li class="nav-item">
@@ -81,18 +74,18 @@
             <RouterLink class="nav-link-soft nav-link" to="/my-plan">My Plan</RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link-soft nav-link" to="/community">Community</RouterLink>
-          </li>
-          <li class="nav-item">
             <RouterLink class="nav-link-soft nav-link" to="/combined-tables">Data Tables</RouterLink>
           </li>
           <li class="nav-item">
-            <RouterLink class="nav-link-soft nav-link" to="/email">Email</RouterLink>
+            <RouterLink class="nav-link-soft nav-link" to="/clinics">Find Clinics</RouterLink>
+          </li>
+          <li class="nav-item">
+            <RouterLink class="nav-link-soft nav-link" to="/email">Give Feedback</RouterLink>
           </li>
           <li class="nav-item">
             <RouterLink class="nav-link-soft nav-link" to="/profile">Profile</RouterLink>
           </li>
-          <li class="nav-item">
+          <li v-if="isAdmin" class="nav-item">
             <RouterLink class="nav-link-soft nav-link" to="/admin">Admin</RouterLink>
           </li>
 
@@ -121,7 +114,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { signOut, onAuthStateChanged } from 'firebase/auth'
 import { auth } from '../firebase'
@@ -129,6 +122,11 @@ import { auth } from '../firebase'
 const router = useRouter()
 const isLoggedIn = ref(false)
 const userEmail = ref('')
+
+// Check if current user is admin
+const isAdmin = computed(() => {
+  return userEmail.value === 'djia0019@student.monash.edu'
+})
 
 // Check Firebase authentication status
 const checkAuthStatus = () => {
