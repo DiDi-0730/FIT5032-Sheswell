@@ -93,12 +93,12 @@ function createEmailTemplate(userType = 'general', userName = '') {
 // Enhanced daily health reminder with error handling and analytics
 exports.dailyHealthReminderAuth = onSchedule(
   {
-    schedule: '00 22 * * *',         
-    timeZone: 'Australia/Sydney',     
+    schedule: '00 22 * * *',
+    timeZone: 'Australia/Sydney',
     secrets: [SENDGRID_API_KEY, SENDGRID_FROM],
-    memory: '1GiB',                   
-    timeoutSeconds: 540,              
-    maxInstances: 10,                
+    memory: '1GiB',
+    timeoutSeconds: 540,
+    maxInstances: 10,
   },
   async () => {
     const startTime = Date.now();
@@ -268,7 +268,7 @@ exports.dailyHealthReminderAuth = onSchedule(
         executionTime: Date.now() - startTime
       }, { merge: true });
 
-      throw error; 
+      throw error;
     }
   }
 );

@@ -125,7 +125,7 @@ const userEmail = ref('')
 
 // Check if current user is admin
 const isAdmin = computed(() => {
-  return userEmail.value === 'djia0019@student.monash.edu'
+  return userEmail.value === 'a1932087596@163.com'
 })
 
 // Check Firebase authentication status

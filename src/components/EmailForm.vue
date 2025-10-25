@@ -3,17 +3,17 @@ import { ref, computed } from 'vue'
 import { sendMail } from '../firebase' // Firebase Functions wrapper
 
 
-const to = ref('djia0019@student.monash.edu') 
+const to = ref('a1932087596@163.com')
 const subject = ref('')
 const body = ref('')
-const asHtml = ref(true)               
-const files = ref([])                  
-const attachmentsBase64 = ref([])      
+const asHtml = ref(true)
+const files = ref([])
+const attachmentsBase64 = ref([])
 
 
 const loading = ref(false)
-const notice = ref('')                 
-const noticeType = ref('success')      
+const notice = ref('')
+const noticeType = ref('success')
 
 const emailList = computed(() =>
   to.value
@@ -74,7 +74,7 @@ async function handleSend() {
     console.log(res.data)
     noticeType.value = 'success'
     notice.value = 'Email sent successfully!'
-    // Clear form 
+    // Clear form
     clearForm()
   } catch (err) {
     console.error(err)

@@ -180,7 +180,7 @@ let userMarker
 let clinicMarkers = []
 let routeLayerId = 'route-line'
 
-const userLngLat = ref(null) 
+const userLngLat = ref(null)
 const manualQuery = ref('')
 const radiusKm = ref(5)
 const clinics = ref([])
@@ -197,12 +197,12 @@ const initMap = () => {
   map = new mapboxgl.Map({
     container: mapEl.value,
     style: 'mapbox://styles/mapbox/streets-v12',
-    center: [144.9631, -37.8136], 
+    center: [144.9631, -37.8136],
     zoom: 12,
     attributionControl: true,
     maxBounds: [
-      [113.0, -44.0], 
-      [154.0, -10.0]  
+      [113.0, -44.0],
+      [154.0, -10.0]
     ]
   })
 
