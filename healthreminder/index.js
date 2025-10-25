@@ -256,7 +256,7 @@ exports.dailyHealthReminderAuth = onSchedule(
       }, { merge: true });
 
     } catch (error) {
-      logger.error('💥 Critical error in health reminder function:', error);
+      logger.error(' Critical error in health reminder function:', error);
       analytics.errors.push({ critical: true, error: error.message });
 
       // Store error analytics
